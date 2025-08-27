@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 25.2.3.2 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="00:00:00"/>
+	<style type="text/css">
+		@page { size: 8.27in 11.69in; margin: 0.79in }
+		p { margin-bottom: 0.1in; line-height: 115%; background: transparent }
+		pre { font-size: 10pt; font-family: "Liberation Mono", monospace; background: transparent }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;C &amp; C Partner Portal&lt;/title&gt;
+  &lt;style&gt;
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f7f9fc; }
+    h1 { color: #2b4c7e; }
+    .box { background: #fff; border: 1px solid #ccc; padding: 20px; width: 400px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    input, button { display: block; margin: 10px 0; padding: 10px; width: 95%; border-radius: 5px; border: 1px solid #ccc; }
+    button { background: #2b4c7e; color: white; cursor: pointer; font-weight: bold; }
+    button:hover { background: #3d67a8; }
+    #portal { display: none; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; background: #fff; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #2b4c7e; color: white; }
+    tr:nth-child(even) { background: #f2f2f2; }
+    #results { margin-top: 20px; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;C &amp; C Professional Housing Solutions Partner Portal&lt;/h1&gt;
+
+  &lt;div id=&quot;login&quot; class=&quot;box&quot;&gt;
+    &lt;h3&gt;Login&lt;/h3&gt;
+    &lt;input id=&quot;username&quot; placeholder=&quot;Username&quot;&gt;
+    &lt;input id=&quot;password&quot; type=&quot;password&quot; placeholder=&quot;Password&quot;&gt;
+    &lt;button onclick=&quot;login()&quot;&gt;Login&lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;div id=&quot;portal&quot; class=&quot;box&quot;&gt;
+    &lt;h3&gt;Search Housing&lt;/h3&gt;
+    &lt;input id=&quot;city&quot; placeholder=&quot;Enter City&quot;&gt;
+    &lt;button onclick=&quot;search()&quot;&gt;Search&lt;/button&gt;
+    &lt;div id=&quot;results&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;script&gt;
+async function login() {
+  const res = await fetch(&quot;/login&quot;, {
+    method: &quot;POST&quot;,
+    headers: { &quot;Content-Type&quot;: &quot;application/json&quot; },
+    body: JSON.stringify({ username: document.getElementById(&quot;username&quot;).value })
+  });
+
+  if (res.ok) {
+    document.getElementById(&quot;login&quot;).style.display = &quot;none&quot;;
+    document.getElementById(&quot;portal&quot;).style.display = &quot;block&quot;;
+  } else {
+    alert(&quot;Login failed&quot;);
+  }
+}
+
+async function search() {
+  const city = document.getElementById(&quot;city&quot;).value;
+  const res = await fetch(&quot;/assets?city=&quot; + encodeURIComponent(city));
+  const data = await res.json();
+
+  if (!Array.isArray(data) || data.length === 0) {
+    document.getElementById(&quot;results&quot;).innerHTML = `&lt;p&gt;No assets found in ${city}.&lt;/p&gt;`;
+    return;
+  }
+
+  let html = &quot;&lt;table&gt;&lt;tr&gt;&lt;th&gt;Asset Name&lt;/th&gt;&lt;th&gt;Tag&lt;/th&gt;&lt;th&gt;Location&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&quot;;
+  data.forEach(a =&gt; {
+    html += `&lt;tr&gt;
+      &lt;td&gt;${a.name || &quot;—&quot;}&lt;/td&gt;
+      &lt;td&gt;${a.asset_tag || &quot;—&quot;}&lt;/td&gt;
+      &lt;td&gt;${a.location?.name || city}&lt;/td&gt;
+      &lt;td&gt;${a.status_label?.name || &quot;—&quot;}&lt;/td&gt;
+    &lt;/tr&gt;`;
+  });
+  html += &quot;&lt;/table&gt;&quot;;
+  document.getElementById(&quot;results&quot;).innerHTML = html;
+}
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+</body>
+</html>
