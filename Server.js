@@ -16,14 +16,16 @@ app.use(session({
   saveUninitialized: true
 }));
 
-// Serve frontend
-app.use(express.static(path.join(__dirname, "../frontend")));
+// Serve static frontend files from root
+app.use(express.static(__dirname));
 
 // Config
 const SNIPEIT_URL = process.env.SNIPEIT_URL || "https://victoria.snipe-it.io";
 const API_KEY = process.env.SNIPEIT_API_KEY || "PUT-YOUR-API-KEY-HERE";
 
-// Login
+// -------------------------
+// LOGIN ENDPOINT
+// -------------------------
 app.post("/login", async (req, res) => {
   const { username } = req.body;
   try {
@@ -46,7 +48,9 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// Asset search
+// -------------------------
+// ASSET SEARCH ENDPOINT
+// -------------------------
 app.get("/assets", async (req, res) => {
   if (!req.session.user) return res.status(403).json({ message: "Not logged in" });
 
@@ -70,17 +74,21 @@ app.get("/assets", async (req, res) => {
   }
 });
 
-// Logout
+// -------------------------
+// LOGOUT ENDPOINT
+// -------------------------
 app.post("/logout", (req, res) => {
   req.session.destroy();
   res.json({ message: "Logged out" });
 });
 
-// Serve frontend for any unknown route
+// Serve index.html for any unknown route
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/index.html"));
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Start server
+// -------------------------
+// START SERVER
+// -------------------------
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Portal backend running at http://localhost:${PORT}`));
